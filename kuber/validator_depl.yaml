@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: validatorserver
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: validatorserver
+  template: 
+    metadata: 
+      labels: 
+        app: validatorserver
+    spec: 
+      containers: 
+        - 
+          image: "harrisson/validatorserver:latest"
+          name: validatorserver
+          ports: 
+            - 
+              containerPort: 8082
+              name: validatorserver
+	   
+
+          

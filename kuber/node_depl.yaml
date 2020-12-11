@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: carserver
+spec: 
+  replicas: 10
+  selector: 
+    matchLabels: 
+      app: node
+  template: 
+    metadata: 
+      labels: 
+        app: carserver
+    spec: 
+      containers: 
+        - 
+          image: "harrisson/carserver:latest"
+          name: carserver
+          ports: 
+            - 
+              containerPort: 8083
+              name: carserver
+	    -
+	      containerPort: 9083
+              name: carserver-grpc
+
+          

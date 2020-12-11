@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: carserver
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: controlserver
+  template: 
+    metadata: 
+      labels: 
+        app: controlserver
+    spec: 
+      containers: 
+        - 
+          image: "harrisson/controlserver:latest"
+          name: controlserver
+          ports: 
+            - 
+              containerPort: 8083
+              name: controlserver
+	   
+
+          
