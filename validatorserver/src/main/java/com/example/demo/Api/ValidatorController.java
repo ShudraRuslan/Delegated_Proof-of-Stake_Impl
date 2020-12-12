@@ -13,7 +13,7 @@ public class ValidatorController {
     private final ValidatorService service;
 
     @Autowired
-    public ValidatorController(ValidatorService service) throws InterruptedException {
+    public ValidatorController(ValidatorService service) {
         this.service = service;
         service.createNewValidator();
     }

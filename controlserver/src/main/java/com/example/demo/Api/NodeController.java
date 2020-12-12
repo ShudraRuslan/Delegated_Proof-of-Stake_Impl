@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
@@ -23,7 +25,7 @@ public class NodeController {
 
     @PostMapping("/nodeIp")
     public ResponseEntity<String> getNodeIp(@RequestParam String nodeIp) {
-        service.setNodeInfo(nodeIp);
+
         try {
             service.sendValidatorsIpsToNode(nodeIp);
         } catch (Exception ignored) {
@@ -34,12 +36,12 @@ public class NodeController {
     }
 
     @PostMapping("/validatorElections")
-    public ResponseEntity<String> getElectionsResult(@RequestParam String electionResults) {
+    public ResponseEntity<String> getElectionsResult(@RequestParam String electionResults) throws UnsupportedEncodingException {
         Gson gson = new Gson();
         Type type = new TypeToken<Map<Integer, Double>>() {
         }.getType();
-        System.out.println(electionResults);
-        Map<Integer, Double> results = gson.fromJson(electionResults, type);
+        String result = java.net.URLDecoder.decode(electionResults, StandardCharsets.UTF_8.name());
+        Map<Integer, Double> results = gson.fromJson(result, type);
         service.setElectionResults(results);
         return ResponseEntity.ok("Results were committed!");
     }

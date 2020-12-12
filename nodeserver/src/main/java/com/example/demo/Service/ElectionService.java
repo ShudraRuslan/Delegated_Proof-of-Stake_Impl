@@ -17,7 +17,7 @@ import static java.lang.Math.random;
 
 public class ElectionService extends Thread {
 
-    private final String address = "http://localhost:8083";
+    private final String address = "http://controlserver:8083";
     private final RestTemplate template = new RestTemplate();
     private final ValidatorRepo repo;
     private final Node node;
@@ -60,6 +60,7 @@ public class ElectionService extends Thread {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(newAddress).
                 queryParam("electionResults", object);
+
         try {
             HttpEntity<String> response = template.exchange(builder.toUriString(), HttpMethod.POST, null, String.class);
             System.out.println(response.getBody());

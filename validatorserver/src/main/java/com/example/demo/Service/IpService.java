@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class IpService extends Thread {
 
     private final Integer validatorId;
-    private final String address = "http://localhost:8083";
+    private final String address = "http://controlserver:8083";
     private final RestTemplate template = new RestTemplate();
 
     public IpService(Integer validatorId) {

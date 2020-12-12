@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class NodeController {
     private final ValidatorRepo repo;
 
     @Autowired
-    public NodeController(ValidatorRepo repo) throws InterruptedException {
+    public NodeController(ValidatorRepo repo) {
 
         this.node = new Node();
         this.validatorsIdList = new HashSet<>();
@@ -37,11 +39,12 @@ public class NodeController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> getValidatorsId(@RequestParam String json) {
+    public ResponseEntity<Void> getValidatorsId(@RequestParam String json) throws UnsupportedEncodingException {
         Gson gson = new Gson();
         Type type = new TypeToken<Set<Integer>>() {
         }.getType();
-        validatorsIdList = gson.fromJson(json, type);
+        String result = java.net.URLDecoder.decode(json, StandardCharsets.UTF_8.name());
+        validatorsIdList = gson.fromJson(result, type);
         return ResponseEntity.ok().build();
 
     }

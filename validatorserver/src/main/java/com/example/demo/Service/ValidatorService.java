@@ -11,7 +11,7 @@ import static java.lang.Math.random;
 @Service
 public class ValidatorService {
     private final ValidatorRepo repo;
-    private final String address = "http://localhost:8083";
+    private final String address = "http://controlserver:8083";
     private final RestTemplate template = new RestTemplate();
     private Integer sendValue;
 
@@ -21,7 +21,7 @@ public class ValidatorService {
         this.repo = repo;
     }
 
-    public void createNewValidator() throws InterruptedException {
+    public void createNewValidator(){
         Validator validator = new Validator();
         repo.save(validator);
         Integer id = validator.getValidatorId();

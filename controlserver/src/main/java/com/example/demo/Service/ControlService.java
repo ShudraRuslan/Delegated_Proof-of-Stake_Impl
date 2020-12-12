@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import com.example.demo.Classes.Validator;
 import com.example.demo.Classes.ValidatorRepo;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,37 +10,44 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
-public class ControlService {
+public class ControlService extends Thread {
     private final ValidatorRepo repo;
     private final RestTemplate template = new RestTemplate();
     private final Map<Integer, String> validatorInfo;
-    private final List<String> nodeInfo;
     private final Map<Integer, Double> electionResults;
+    private List<Integer> validatorQueue;
+    private Integer validatorIdToGetResult;
 
     @Autowired
     public ControlService(ValidatorRepo repo) {
         this.repo = repo;
         validatorInfo = new HashMap<>();
-        nodeInfo = new ArrayList<>();
         electionResults = new HashMap<>();
+        validatorQueue = new ArrayList<>();
+    }
+
+    public Integer getValidatorIdToGetResult() {
+        return validatorIdToGetResult;
     }
 
     public void setValidatorInfo(Integer id, String ip) {
         validatorInfo.put(id, ip);
     }
 
-    public void setNodeInfo(String ip) {
-        nodeInfo.add(ip);
-    }
 
     public void setElectionResults(Map<Integer, Double> results) {
         for (Integer integer : results.keySet()) {
-            double previousResult = electionResults.get(integer);
-            electionResults.put(integer, previousResult + results.get(integer));
+            Validator validator = repo.getValidatorByValidatorId(integer);
+            double previousCash = validator.getElectionCash();
+            double newCash = results.get(integer);
+            validator.setElectionCash(previousCash + newCash);
+            repo.save(validator);
         }
 
+        this.validatorQueue = getValidatorsQueue();
     }
 
     public void sendValidatorsIpsToNode(String ip) {
@@ -60,14 +68,28 @@ public class ControlService {
         return idsList;
     }
 
-    public Integer getValidatorsQueue() {
+    private List<Integer> getValidatorsQueue() {
         List<Integer> idList = findWinnersAmongValidators();
         Collections.shuffle(idList);
-        return idList.get(0);
+        return idList;
     }
 
     public String getValidatorsIpQueue(Integer id) {
 
         return validatorInfo.get(id);
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                int index = (int) (Math.random() * 3);
+                validatorIdToGetResult = validatorQueue.get(index);
+                TimeUnit.SECONDS.sleep(5);
+            } catch (Exception ignored) {
+
+            }
+
+        }
     }
 }
